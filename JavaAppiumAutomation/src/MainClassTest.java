@@ -1,14 +1,13 @@
+import org.junit.Assert;
 import org.junit.Test;
 
 public class MainClassTest extends MainClass{
+
+
     @Test
     public void testGetLocalNumber() {
-        int exp = 14;
+        int expected = 14;
 
-        if (exp == getLocalNumber()) {
-            System.out.println("Test passed, expected result: " + exp + "; actual result: " + getLocalNumber());
-        } else {
-            System.out.println("Test failed, expected result: " + exp + "; actual result: " + getLocalNumber());
-        }
+        Assert.assertTrue("expected result " + expected + " != actual result " + getLocalNumber(), expected == getLocalNumber());
     }
 }
