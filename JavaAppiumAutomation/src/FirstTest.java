@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -142,10 +143,75 @@ public class FirstTest {
                 "Search Wikipedia",
                 "'Text' attribute for the search field doesn't match with expected 'text' value",
                 5);
-
     }
 
+    @Test
+    public void checkSearchResultsAndCancelSearch(){
+        //закрываем онбординг в новой версии приложения википедии
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button for onboarding screen not found",
+                5);
 
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                "Cannot find search field",
+                5);
+
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                "meme",
+                "Cannot find search field input",
+                5);
+
+        //убеждаемся, что контейнер с элементами 1-й статьи есть на странице поиска
+        waitForElementPresent(
+                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 1]"),
+                "1-st article wasn't found on search result page",
+                15);
+
+        //проверяем, что название 1 статьи содержит поисковый запрос
+        assertElementHasText(
+                    By.xpath("//*[@class='android.view.ViewGroup'][@instance = 1]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                    "meme",
+                    "'Text' attribute for the article title doesn't match with expected 'text' value",
+                   5);
+
+        //убеждаемся, что контейнер с элементами 2-й статьи есть на странице поиска [@instance = '2']
+
+        waitForElementPresent(
+                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 2]"),
+                "2-nd article wasn't found on search result page",
+                15);
+
+
+        //проверяем, что название 2-й статьи содержит поисковый запрос
+        assertElementHasText(
+                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 2]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "meme",
+                "'Text' attribute for the article title doesn't match with expected 'text' value",
+                5);
+
+        //убеждаемся, что контейнер с элементами 3-й статьи есть на странице поиска
+        waitForElementPresent(
+                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 3]"),
+                "3-rd article wasn't found on search result page",
+                15);
+
+        //проверяем, что название 3-й статьи содержит поисковый запрос
+        assertElementHasText(
+                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 3]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "meme",
+                "'Text' attribute for the article title doesn't match with expected 'text' value",
+                5);
+
+        //нажимаем крестик в строке поиска -очищаем строку поиска и результаты поиска
+        waitForElementAndClick(By.id("org.wikipedia:id/search_close_btn"),
+                "Cannot find cancel search button",
+                5);
+
+        //убеждаемся, что на экране нет элементов, в которых есть заголовок статьи
+        waitForElementNotFound(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "There are search results on the page after canceling search",
+                15);
+    }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -189,8 +255,8 @@ public class FirstTest {
         WebElement element = waitForElementPresent(by, "Cannot find element", timeoutInSeconds);
 
         Assert.assertThat("my error message",
-                element.getAttribute("text"),
-                containsString(text_expected_value)
+                element.getAttribute("text").toLowerCase(),
+                containsString(text_expected_value.toLowerCase())
         );
     }
 }
