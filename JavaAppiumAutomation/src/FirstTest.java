@@ -11,6 +11,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
 
+import static org.hamcrest.CoreMatchers.containsString;
+
 public class FirstTest {
 
     private AppiumDriver driver;
@@ -143,6 +145,8 @@ public class FirstTest {
 
     }
 
+
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
@@ -184,10 +188,9 @@ public class FirstTest {
     private void assertElementHasText(By by, String text_expected_value, String error_message,long timeoutInSeconds){
         WebElement element = waitForElementPresent(by, "Cannot find element", timeoutInSeconds);
 
-        Assert.assertEquals(
-                error_message,
-                text_expected_value,
-                element.getAttribute("text")
+        Assert.assertThat("my error message",
+                element.getAttribute("text"),
+                containsString(text_expected_value)
         );
     }
 }
