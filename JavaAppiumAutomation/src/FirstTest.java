@@ -95,7 +95,7 @@ public class FirstTest {
     }
 
     @Test
-    public void compareArticleTitle(){
+    public void compareArticleTitle() {
         waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
                 "SKIP button not found",
                 5);
@@ -124,7 +124,22 @@ public class FirstTest {
                 "Java (programming language)",
                 article_title
         );
- //       Java (programming language)
+    }
+
+        @Test
+        public void checkSearchFieldCaption(){
+
+        //закрываем онбординг в новой версии приложения википедии
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                    "SKIP button for onboarding screen not found",
+                    5);
+
+
+        assertElementHasText(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_container']//descendant::android.widget.TextView"),
+                "Search Wikipedia",
+                "'Text' attribute for the search field doesn't match with expected 'text' value",
+                5);
 
     }
 
@@ -164,5 +179,15 @@ public class FirstTest {
         WebElement element = waitForElementPresent(by,error_message,timeoutInSeconds);
         element.clear();
         return element;
+    }
+
+    private void assertElementHasText(By by, String text_expected_value, String error_message,long timeoutInSeconds){
+        WebElement element = waitForElementPresent(by, "Cannot find element", timeoutInSeconds);
+
+        Assert.assertEquals(
+                error_message,
+                text_expected_value,
+                element.getAttribute("text")
+        );
     }
 }
