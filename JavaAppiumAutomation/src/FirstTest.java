@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -156,12 +157,13 @@ public class FirstTest {
                 "Cannot find search field",
                 5);
 
+        String  search_query = "meme";
+
         waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                "meme",
+                search_query,
                 "Cannot find search field input",
                 5);
 
-        String  search_query = "meme";
         int c = 1;
         while (c < 4) {
                 //убеждаемся, что контейнер с элементами c-й статьи есть на странице поиска
@@ -189,6 +191,57 @@ public class FirstTest {
                 "There are search results on the page after canceling search",
                 15);
 
+    }
+
+    @Test
+    public void checkSearchResultsForQuery(){
+        //закрываем онбординг в новой версии приложения википедии
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button for onboarding screen not found",
+                5);
+
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                "Cannot find search field",
+                5);
+
+        String  search_query = "meme";
+
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                search_query,
+                "Cannot find search field input",
+                5);
+
+        int count = 1;
+
+        WebElement searchResult = null;
+        //локатор ищет page_list_item_title в соотвествующем android.view.ViewGroup
+        By article_title = By.xpath("//*[@class='android.view.ViewGroup'][@instance = " + count + "]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']");
+        //определяем, есть ли на странице хотя бы один результат поиска, содержащий локатор с названием статьи page_list_item_title
+        searchResult = waitForElementPresent(
+                article_title,
+                "No search results present",
+                15);
+        //проверяем, содержится ли в тексте локатора поисковый запрос
+        assertElementHasText(article_title, search_query, "Search result " + count + " '" + searchResult.getAttribute("text") + "' doesn't contain search query '"+search_query +"'",5);
+
+        while (searchResult != null) //если на странице есть результат поиска, то переходим к элементу со следующим по порядку локатором
+        {
+            count++;
+            article_title = By.xpath("//*[@class='android.view.ViewGroup'][@instance = " + count + "]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']");
+            try {
+                searchResult = waitForElementPresent(
+                        article_title,
+                        "no article present",
+                        15);
+                assertElementHasText(article_title, search_query, "search result " + count + " '" + searchResult.getAttribute("text") + "' doesn't contain search query '"+search_query +"'",5);
+            }
+            catch (TimeoutException exception) //если поиск следующего элемента закончился эксепшеном, то завершаем цикл
+            {
+                System.out.println("No more search results visible on this page");
+                searchResult = null;
+            }
+
+        }
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
@@ -231,8 +284,8 @@ public class FirstTest {
 
     private void assertElementHasText(By by, String text_expected_value, String error_message,long timeoutInSeconds){
         WebElement element = waitForElementPresent(by, "Cannot find element", timeoutInSeconds);
-//        System.out.println("article title = " + element.getAttribute("text").toLowerCase());
-        Assert.assertThat("my error message",
+        System.out.println("element text = " + element.getAttribute("text").toLowerCase());
+        Assert.assertThat(error_message,
                 element.getAttribute("text").toLowerCase(),
                 containsString(text_expected_value.toLowerCase())
         );
