@@ -161,46 +161,23 @@ public class FirstTest {
                 "Cannot find search field input",
                 5);
 
-        //убеждаемся, что контейнер с элементами 1-й статьи есть на странице поиска
-        waitForElementPresent(
-                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 1]"),
-                "1-st article wasn't found on search result page",
-                15);
+        String  search_query = "meme";
+        int c = 1;
+        while (c < 4) {
+                //убеждаемся, что контейнер с элементами c-й статьи есть на странице поиска
+                waitForElementPresent(
+                        By.xpath("//*[@class='android.view.ViewGroup'][@instance = " + c + "]"),
+                        c + " article wasn't found on search result page",
+                        15);
 
-        //проверяем, что название 1 статьи содержит поисковый запрос
-        assertElementHasText(
-                    By.xpath("//*[@class='android.view.ViewGroup'][@instance = 1]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
-                    "meme",
-                    "'Text' attribute for the article title doesn't match with expected 'text' value",
-                   5);
-
-        //убеждаемся, что контейнер с элементами 2-й статьи есть на странице поиска [@instance = '2']
-
-        waitForElementPresent(
-                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 2]"),
-                "2-nd article wasn't found on search result page",
-                15);
-
-
-        //проверяем, что название 2-й статьи содержит поисковый запрос
-        assertElementHasText(
-                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 2]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
-                "meme",
-                "'Text' attribute for the article title doesn't match with expected 'text' value",
-                5);
-
-        //убеждаемся, что контейнер с элементами 3-й статьи есть на странице поиска
-        waitForElementPresent(
-                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 3]"),
-                "3-rd article wasn't found on search result page",
-                15);
-
-        //проверяем, что название 3-й статьи содержит поисковый запрос
-        assertElementHasText(
-                By.xpath("//*[@class='android.view.ViewGroup'][@instance = 3]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
-                "meme",
-                "'Text' attribute for the article title doesn't match with expected 'text' value",
-                5);
+                //проверяем, что название статьи содержит поисковый запрос
+                assertElementHasText(
+                        By.xpath("//*[@class='android.view.ViewGroup'][@instance = " + c + "]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                        search_query,
+                        "'Text' attribute for the " + c + " article title doesn't match with expected '" + search_query + "' value",
+                        5);
+                c++;
+        }
 
         //нажимаем крестик в строке поиска -очищаем строку поиска и результаты поиска
         waitForElementAndClick(By.id("org.wikipedia:id/search_close_btn"),
@@ -211,6 +188,7 @@ public class FirstTest {
         waitForElementNotFound(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
                 "There are search results on the page after canceling search",
                 15);
+
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
@@ -253,7 +231,7 @@ public class FirstTest {
 
     private void assertElementHasText(By by, String text_expected_value, String error_message,long timeoutInSeconds){
         WebElement element = waitForElementPresent(by, "Cannot find element", timeoutInSeconds);
-
+//        System.out.println("article title = " + element.getAttribute("text").toLowerCase());
         Assert.assertThat("my error message",
                 element.getAttribute("text").toLowerCase(),
                 containsString(text_expected_value.toLowerCase())
