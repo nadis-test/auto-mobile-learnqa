@@ -1,17 +1,19 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -27,6 +29,8 @@ public class FirstTest {
         capabilities.setCapability("platformName","Android");
         capabilities.setCapability("deviceName","emulator-5554");
         capabilities.setCapability("platformVersion","10");
+        //capabilities.setCapability("deviceName","emulator-5556");
+        //capabilities.setCapability("platformVersion","8.0.0");
         capabilities.setCapability("automationName","Appium");
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity",".main.MainActivity");
@@ -225,6 +229,7 @@ public class FirstTest {
         assertElementHasText(article_title, search_query, "Search result " + count + " '" + searchResult.getAttribute("text") + "' doesn't contain search query '"+search_query +"'",5);
 
         while (searchResult != null) //если на странице есть результат поиска, то переходим к элементу со следующим по порядку локатором
+            //можно написать цикл проще, если не использовать waitForElementPresent, а просто сделать перебор WebElements
         {
             count++;
             article_title = By.xpath("//*[@class='android.view.ViewGroup'][@instance = " + count + "]//descendant::android.widget.TextView[@resource-id = 'org.wikipedia:id/page_list_item_title']");
@@ -242,6 +247,37 @@ public class FirstTest {
             }
 
         }
+    }
+
+    @Test
+    public void testSwipeArticle(){
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Canno't find search field",
+                5);
+
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                "Java",
+                "Cannot find search input",
+                5);
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Object-oriented programming language')]"),
+                "Canno't find link to the 'Object-oriented programming language' article",
+                5);
+
+        waitForElementPresent(By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot find article title",
+                15);
+
+        swipeUp(2000);
+        swipeUp(2000);
+        swipeUp(2000);
+        swipeUp(2000);
+        swipeUp(2000);
+
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
@@ -289,5 +325,22 @@ public class FirstTest {
                 element.getAttribute("text").toLowerCase(),
                 containsString(text_expected_value.toLowerCase())
         );
+    }
+
+    protected void swipeUp(int timeOfSwipe){
+        //TouchAction action = new TouchAction(driver);
+        TouchAction action = new TouchAction(driver);
+
+        //селениумовским классом получаем размер экрана нашего моб девайса, чтобы потом вычислять относительные координаты для press и других действий
+        Dimension size = driver.manage().window().getSize();
+        //х - точка посередине по оси х девайса
+        int x = size.width / 2;
+        //точка внизу 80% экрана девайса - откуда начнем свайп
+        int start_y = (int) (size.height * 0.85);
+        //точка внизу 20% экрана девайса - где закончим свайп
+        int end_y = (int) (size.height * 0.2);
+        //нажимаем в точке начала свайпа, ждем таймаут (который передали в метод), перемещаем в точку завершения свайпа, выполняем
+        action.press(x,start_y).waitAction(timeOfSwipe).moveTo(x, end_y).perform();
+
     }
 }
