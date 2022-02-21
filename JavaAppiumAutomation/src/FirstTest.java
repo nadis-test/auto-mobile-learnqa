@@ -5,15 +5,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -35,6 +33,7 @@ public class FirstTest {
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity",".main.MainActivity");
         capabilities.setCapability("app","/Users/n.porotkova/GitHub/auto-mobile-learnqa/JavaAppiumAutomation/apks/org.wikipedia.apk");
+
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
@@ -251,14 +250,52 @@ public class FirstTest {
 
     @Test
     public void testSwipeArticle(){
+        //нажимаем SKIP - закрываем онбординг
         waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
                 "SKIP button not found",
                 5);
 
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search field",
+                5);
+
+        //пишем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                "Appium",
+                "Cannot find search input",
+                5);
+
+        //кликаем по заголовку статьи на странице с результатами поиска и переходим в статью
+        waitForElementAndClick(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_description'][contains(@text,'Automation for Apps')]"),
+                "Cannot find link to the 'Appium' article",
+                5);
+
+        //проверяем, что в статье правильный заголовок
+        waitForElementPresent(By.xpath("//*[@text='Automation for Apps']"),
+                "Cannot find article title",
+                15);
+
+        //делаем свайп до элемента View article in browser - то есть до конца экрана со статьей
+        swipeUpToFindElement(By.xpath("//*[@text='View article in browser']"),
+                "Cannot find bottom of the page", 10);
+
+
+    }
+
+    @Test
+    public void saveFirstArticleToMyList(){
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
         waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Canno't find search field",
                 5);
 
+        //пишем поисковый запрос в поле поиска
         waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
                 "Java",
                 "Cannot find search input",
@@ -268,16 +305,238 @@ public class FirstTest {
                 "Canno't find link to the 'Object-oriented programming language' article",
                 5);
 
-        waitForElementPresent(By.xpath("//*[@text='Java (programming language)']"),
-                "Cannot find article title",
+        String article_title = "Java (programming language)";
+
+        WebElement title_element = waitForElementPresent(By.xpath("//*[@text='" + article_title + "']"),
+                "Cannot find title for article '" + article_title + "'" ,
                 15);
 
-        swipeUp(2000);
-        swipeUp(2000);
-        swipeUp(2000);
-        swipeUp(2000);
-        swipeUp(2000);
+        //кликаю на кнопку Save на нижней панели
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/article_menu_bookmark']"),
+                "'Save' bookmark button not found on navigation panel",
+                5);
 
+        //во всплывающем окне кликаю ADD TO LIST
+        waitForElementAndClick(By.xpath("//*[contains(@text,'ADD TO LIST')]"),
+                "'ADD TO LIST' button not found",
+                5);
+
+        String saved_list_name = "my list";
+
+        //в окне создания нового списка сохраненного пишу название списка
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/text_input']"),
+                saved_list_name,
+                "'Name of the list' input not found",
+                5);
+
+        //в окне создания нового списка сохраненного нажимаю OK
+        waitForElementAndClick(By.xpath("//*[@resource-id='android:id/button1'][@text = 'OK']"),
+                "ОК button not found",
+                5);
+
+        //возвращаюсь со страницы статьи на страницу результатов поиска
+        waitForElementAndClick(By.xpath("//*[contains(@content-desc,'Navigate up')]"),
+                "'Navigate up' from article to search results page not found on toolbar",
+                5);
+
+        //возвращаюсь со страницы результатов поиска на главную страницу
+        waitForElementAndClick(By.xpath("//*[@resource-id = 'org.wikipedia:id/search_toolbar']//*[@class = 'android.widget.ImageButton']"),
+                "'Navigate up' from search results page to main page not found on toolbar",
+                5);
+
+        //кликаю на кнопку сохраненного на нав панели
+        waitForElementAndClick(By.xpath("//*[contains(@content-desc, 'Saved')]"),
+                "Saved button not found on navigation panel",
+                5);
+
+        //кликаю на созданный список в списке сохраненного
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/item_title'][@text='" + saved_list_name + "']"),
+                "'" + saved_list_name + "' item  not found in Save screen",
+                5);
+
+        //проверяю свою статью в списке
+        assertElementHasText(By.id("org.wikipedia:id/page_list_item_title"),
+                article_title,
+                "'" + article_title + "' article not found in the saved list",
+                5);
+
+        //свайпаю для удаления статьи из списка
+        swipeElementToLeft(By.xpath("//*[@text='" + article_title + "']"),
+                "'"+ article_title + "' article not found in the saved list");
+
+        //проверяю, что статья не отображается после удаления
+        waitForElementNotFound(By.xpath("//*[@text='" + article_title + "']"),
+                "'"+ article_title + "' still present in the saved list",
+                5);
+
+    }
+
+    @Test
+    public void testAmountOfNoEpmtySearch(){
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search field",
+                5);
+
+        String search_text = "Linkin Park diskography";
+
+        //выполняем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_text,
+                "Cannot find search input",
+                5);
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']//*[@resource-id='org.wikipedia:id/page_list_item_title']";
+
+        //проверяем наличие результата поиска по локатору
+        waitForElementPresent(By.xpath(search_result_locator),
+                "Cannot find any results by search request: " + search_text,
+                15);
+
+        int amount_search_results = getAmountOfElements(By.xpath(search_result_locator));
+
+        Assert.assertTrue(
+                "No search results found",
+                amount_search_results > 0
+        );
+
+    }
+
+    @Test
+    public void testAmountOfEmptySearch(){
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search field",
+                5);
+
+        String search_text = "hlsdfkg";
+
+        //выполняем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_text,
+                "Cannot find search input",
+                5);
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']//*[@resource-id='org.wikipedia:id/page_list_item_title']";
+        String empty_result = "//*[@resource-id = 'org.wikipedia:id/results_text'][@text = 'No results']";
+
+        //проверяем наличие элемента пустого результата
+        waitForElementPresent(By.xpath(empty_result),
+                "Cannot find empty search results label",
+                15);
+
+        //проверяем отсутствие результатов поиска
+        assertElementNotPresent(By.xpath(search_result_locator),
+                "Search results are not empty");
+
+    }
+
+    @Test
+    public void testSearchScreenChangeOrientation(){
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search field",
+                5);
+
+        String search_text = "Java";
+
+        //выполняем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_text,
+                "Cannot find search input",
+                5);
+
+        String article_title = "Java (programming language)";
+
+        //кликаем на ссылку статьи
+        waitForElementAndClick(By.xpath("//*[contains(@text,'"+article_title+"')]"),
+                "Cannot find link to the article by search query '" + search_text +"'",
+                5);
+
+
+        //получаем заголовок статьи до переворота экрана
+        String article_title_locator = "//*[@resource-id = 'pcs-edit-section-title-description']//preceding-sibling::android.view.View";
+        String title_before_rotation = waitForElementAndGetAttribute(By.xpath(article_title_locator),
+                "text",
+                "Cannot find title of article before",
+                15);
+
+        //поворачиваем девайс
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+
+        //получаем заголовок статьи после поворота
+        String title_after_rotation = waitForElementAndGetAttribute(By.xpath(article_title_locator),
+                "text",
+                "Cannot find title of article after",
+                15);
+
+        //сравниваем заголовок статьи до поворота и после
+        Assert.assertEquals("article title has been changed after rotation",
+                title_before_rotation,
+                title_after_rotation);
+
+        //поворачиваем девайс повторно
+        driver.rotate(ScreenOrientation.PORTRAIT);
+
+        //снова получаем заголовок статьи после повторного поворота
+        String title_after_second_rotation = waitForElementAndGetAttribute(By.xpath(article_title_locator),
+                "text",
+                "Cannot find title of article after",
+                15);
+
+        //сравниваем заголовок статьи до поворота и после повтороного поворота
+        Assert.assertEquals("article title has been changed after second rotation",
+                title_before_rotation,
+                title_after_second_rotation);
+
+    }
+
+    @Test
+    public void testArticleTitleAfterBackground(){
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Canno't find search field",
+                5);
+
+        String search_query = "Java";
+
+        //пишем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_query,
+                "Cannot find search input",
+                5);
+
+        String article_title = "Java (programming language)";
+
+        waitForElementPresent(By.xpath("//*[contains(@text,'" + article_title + "')]"),
+                "Cannot find the article '" + article_title+ "'",
+                5);
+
+        driver.runAppInBackground(2);
+
+        waitForElementPresent(By.xpath("//*[contains(@text,'" + article_title + "')]"),
+                "After returning from background cannot find the article '" + article_title+ "'",
+                5);
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
@@ -339,8 +598,74 @@ public class FirstTest {
         int start_y = (int) (size.height * 0.85);
         //точка внизу 20% экрана девайса - где закончим свайп
         int end_y = (int) (size.height * 0.2);
+
         //нажимаем в точке начала свайпа, ждем таймаут (который передали в метод), перемещаем в точку завершения свайпа, выполняем
-        action.press(x,start_y).waitAction(timeOfSwipe).moveTo(x, end_y).perform();
+        action.
+                press(x,start_y).
+                waitAction(timeOfSwipe).
+                moveTo(x, end_y).
+                release().
+                perform();
 
     }
+
+    protected void swipeUpQuick(){
+        swipeUp(200);
+    }
+
+    protected void swipeUpToFindElement(By by, String error_message, int max_swipes){
+        int already_swiped = 0;
+        while (driver.findElements(by).size() == 0) {
+            if (already_swiped > max_swipes){
+                waitForElementPresent(by, "Cannot find element by swiping up \n" + error_message, 0);
+                return;
+            }
+            swipeUpQuick();
+            already_swiped++;
+        }
+    }
+
+    protected void swipeElementToLeft(By by, String error_message){
+        WebElement element = waitForElementPresent(by, error_message, 10);
+
+        //находим самую левую точку элемента, который собираемся свайпать
+        int left_x = element.getLocation().getX();
+        //находим самую правую точку элемента
+        int right_x = left_x + element.getSize().getWidth();
+
+        int upper_y = element.getLocation().getY();
+        int bottom_y = upper_y + element.getSize().getHeight();
+        int middle_y = (upper_y + bottom_y) / 2;
+
+        TouchAction action = new TouchAction(driver);
+
+        action.
+                press(right_x, middle_y).
+                waitAction(300).
+                moveTo(left_x, middle_y).
+                release().
+                perform();
+
+    }
+
+    private int getAmountOfElements(By by){
+        List elements = driver.findElements(by);
+        return elements.size();
+
+    }
+
+    private void assertElementNotPresent(By by, String error_message){
+        int amount_of_elements = getAmountOfElements(by);
+        if (amount_of_elements > 0){
+            String default_message = "Element '" + by.toString() +"' supposed to be not present";
+            throw new AssertionError(default_message + " " + error_message);
+        }
+
+    }
+
+    private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeout_in_seconds){
+        WebElement element = waitForElementPresent(by, error_message, timeout_in_seconds);
+        return element.getAttribute(attribute);
+    }
+
 }
