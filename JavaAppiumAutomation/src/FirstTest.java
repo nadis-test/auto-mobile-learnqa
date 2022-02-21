@@ -638,14 +638,12 @@ public class FirstTest {
 
 
         //проверяю, что в списке сохранилась первая статья
-        assertElementHasText(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_1 +"']"),
-                article_title_1,
+        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_1 +"']"),
                 "'" + article_title_1 + "' article not found in the saved list",
                 5);
 
         //проверяю, что в списке сохранилась вторая статья
-        assertElementHasText(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_2 +"']"),
-                article_title_2,
+        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_2 +"']"),
                 "'" + article_title_2 + "' article not found in the saved list",
                 5);
 
@@ -653,16 +651,16 @@ public class FirstTest {
         swipeElementToLeft(By.xpath("//*[@text='" + article_title_1 + "']"),
                 "'"+ article_title_1 + "' article not found in the saved list when trying to delete article");
 
-        //проверяю, что первая статья не отображается после удаления
-        waitForElementNotFound(By.xpath("//*[@text='" + article_title_1 + "']"),
-                "'"+ article_title_1 + "' still present in the saved list after deletion",
-                5);
 
         //проверяю, что в списке отображается вторая статья после удаления первой
         waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_2 +"']"),
                 "'" + article_title_2 + "' article not found in the saved list after deletion '" + article_title_1+ "'",
                 5);
 
+        //проверяю, что первая статья не отображается после удаления
+        assertElementNotPresent(By.xpath("//*[@text='" + article_title_1 + "']"),
+                "'"+ article_title_1 + "' still present in the list after deletion");
+        
     }
 
 
