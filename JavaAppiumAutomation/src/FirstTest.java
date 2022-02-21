@@ -539,6 +539,133 @@ public class FirstTest {
                 5);
     }
 
+    @Test
+    public void saveTwoArticlesDeleteOneArticle(){
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search field",
+                5);
+
+        String search_query = "meme";
+
+        //пишем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_query,
+                "Cannot find search field input",
+                5);
+
+        //переходим в первую статью
+        String article_title_1 = "Memento (film)";
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'" + article_title_1 + "')]"),
+                "Cannot find search result '"+ article_title_1 + "''",
+                5);
+
+        //кликаю на кнопку Save на нижней панели
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/article_menu_bookmark']"),
+                "'Save' bookmark button not found on navigation panel for the article '" + article_title_1 + "'",
+                5);
+
+        //во всплывающем окне кликаю ADD TO LIST
+        waitForElementAndClick(By.xpath("//*[contains(@text,'ADD TO LIST')]"),
+                "'ADD TO LIST' button not found",
+                5);
+
+        String saved_list_name = "Mementos list";
+
+        //в окне создания нового списка сохраненного пишу название списка
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/text_input']"),
+                saved_list_name,
+                "'Name of the list' input not found",
+                5);
+
+        //в окне создания нового списка сохраненного нажимаю OK
+        waitForElementAndClick(By.xpath("//*[@resource-id='android:id/button1'][@text = 'OK']"),
+                "ОК button not found",
+                5);
+
+        //возвращаюсь со страницы статьи на страницу результатов поиска
+        waitForElementAndClick(By.xpath("//*[contains(@content-desc,'Navigate up')]"),
+                "'Navigate up' from article '" + article_title_1 + "' to search results page not found on toolbar",
+                5);
+
+        //переходим во вторую статью
+        String article_title_2 = "Memento mori";
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'" + article_title_2 + "')]"),
+                "Cannot find search result '"+ article_title_2 + "''",
+                5);
+
+        //кликаю на кнопку Save на нижней панели
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/article_menu_bookmark']"),
+                "'Save' bookmark button not found on navigation panel for the article '" + article_title_2 + "'",
+                5);
+
+        //во всплывающем окне кликаю ADD TO LIST
+        waitForElementAndClick(By.xpath("//*[contains(@text,'ADD TO LIST')]"),
+                "'ADD TO LIST' button not found",
+                5);
+
+        //на экране со списками кликаю на созданный список
+        waitForElementAndClick(By.xpath("//*[@resource-id ='org.wikipedia:id/item_title'][@text = '" + saved_list_name +"']"),
+                "'" + saved_list_name + "' not found on the saved lists screen",
+                5);
+
+        //возвращаюсь со страницы статьи на страницу результатов поиска
+        waitForElementAndClick(By.xpath("//*[contains(@content-desc,'Navigate up')]"),
+                "'Navigate up' from article '" + article_title_2 + "' to search results page not found on toolbar",
+                5);
+
+        //возвращаюсь со страницы результатов поиска на главную страницу
+        waitForElementAndClick(By.xpath("//*[@resource-id = 'org.wikipedia:id/search_toolbar']//*[@class = 'android.widget.ImageButton']"),
+                "'Navigate up' from search results page to main page not found on toolbar",
+                5);
+
+        //кликаю на кнопку сохраненного на нав панели
+        waitForElementAndClick(By.xpath("//*[contains(@content-desc, 'Saved')]"),
+                "'Saved' button not found on navigation panel on main page",
+                15);
+
+        //кликаю на созданный список в списке сохраненного
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/item_title'][@text='" + saved_list_name + "']"),
+                "'" + saved_list_name + "' list not found in 'Saved' screen",
+                5);
+
+
+        //проверяю, что в списке сохранилась первая статья
+        assertElementHasText(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_1 +"']"),
+                article_title_1,
+                "'" + article_title_1 + "' article not found in the saved list",
+                5);
+
+        //проверяю, что в списке сохранилась вторая статья
+        assertElementHasText(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_2 +"']"),
+                article_title_2,
+                "'" + article_title_2 + "' article not found in the saved list",
+                5);
+
+        //свайпаю для удаления первой статьи из списка
+        swipeElementToLeft(By.xpath("//*[@text='" + article_title_1 + "']"),
+                "'"+ article_title_1 + "' article not found in the saved list when trying to delete article");
+
+        //проверяю, что первая статья не отображается после удаления
+        waitForElementNotFound(By.xpath("//*[@text='" + article_title_1 + "']"),
+                "'"+ article_title_1 + "' still present in the saved list after deletion",
+                5);
+
+        //проверяю, что в списке отображается вторая статья после удаления первой
+        waitForElementPresent(By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '" + article_title_2 +"']"),
+                "'" + article_title_2 + "' article not found in the saved list after deletion '" + article_title_1+ "'",
+                5);
+
+    }
+
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds){
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
