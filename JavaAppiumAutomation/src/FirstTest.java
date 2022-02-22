@@ -33,6 +33,7 @@ public class FirstTest {
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity",".main.MainActivity");
         capabilities.setCapability("app","/Users/n.porotkova/GitHub/auto-mobile-learnqa/JavaAppiumAutomation/apks/org.wikipedia.apk");
+        capabilities.setCapability("orientation","portrait");
 
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
@@ -43,7 +44,6 @@ public class FirstTest {
     public void tearDown(){
         driver.quit();
     }
-
 
     @Test
     public void firstTest(){
@@ -491,6 +491,7 @@ public class FirstTest {
         Assert.assertEquals("article title has been changed after rotation",
                 title_before_rotation,
                 title_after_rotation);
+
 
         //поворачиваем девайс повторно
         driver.rotate(ScreenOrientation.PORTRAIT);
