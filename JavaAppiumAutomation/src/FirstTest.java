@@ -120,6 +120,8 @@ public class FirstTest {
                 "Canno't find link to the 'Object-oriented programming language' article",
                 5);
 
+
+
         WebElement title_element = waitForElementPresent(By.xpath("//*[@text='Java (programming language)']"),
                 "Cannot find article title",
                 15);
@@ -660,7 +662,51 @@ public class FirstTest {
         //проверяю, что первая статья не отображается после удаления
         assertElementNotPresent(By.xpath("//*[@text='" + article_title_1 + "']"),
                 "'"+ article_title_1 + "' still present in the list after deletion");
-        
+
+    }
+
+    @Test
+    public void testArticleHasTitleElement() {
+        //нажимаем SKIP - закрываем онбординг
+        waitForElementAndClick(By.xpath("//*[contains(@text,'SKIP')]"),
+                "SKIP button not found",
+                5);
+
+        //кликаем по полю поиска
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search field",
+                5);
+
+        String search_query = "meme";
+
+        //пишем поисковый запрос в поле поиска
+        waitForElementAndSendKeys(By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_query,
+                "Cannot find search field input",
+                5);
+
+        //переходим в  статью
+        String article_title = "Memento (film)";
+        waitForElementAndClick(By.xpath("//*[contains(@text,'" + article_title + "')]"),
+                "Cannot find search result '" + article_title + "''",
+                20);
+
+        //String article_title_locator = "//*[@resource-id ='pcs']//child::android.view.View[@instance = '1']";
+        String article_title_locator = "pcs-edit-section-title-description";
+
+        assertElementPresent(
+                By.id(article_title_locator),
+               "Element defined by '" + article_title_locator +"' not found on article page '" + article_title +"'");
+    }
+
+    private void assertElementPresent(By by, String error_message){
+        int amount_of_elements = getAmountOfElements(by);
+
+        if (amount_of_elements == 0){
+            String default_message = "Element '" + by.toString() +"' supposed to be present;";
+            throw new AssertionError(default_message + " " + error_message);
+        }
+
     }
 
 
@@ -792,5 +838,7 @@ public class FirstTest {
         WebElement element = waitForElementPresent(by, error_message, timeout_in_seconds);
         return element.getAttribute(attribute);
     }
+
+
 
 }
