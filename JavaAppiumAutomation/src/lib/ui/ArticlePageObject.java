@@ -10,11 +10,16 @@ public class ArticlePageObject extends MainPageObject {
     FOOTER_ELEMENT = "//*[@text='View article in browser']",
     SAVE_TO_MY_LIST_BUTTON = "//*[@resource-id='org.wikipedia:id/article_menu_bookmark']",
     OPTIONS_ADD_TO_MY_LIST_BUTTON = "//*[contains(@text,'ADD TO LIST')]",
-    MY_LIST_NAME_INPUT = "//*[@resource-id='org.wikipedia:id/text_input']",
+    NEW_LIST_NAME_INPUT = "//*[@resource-id='org.wikipedia:id/text_input']",
     MY_LIST_OK_BUTTON = "//*[@resource-id='android:id/button1'][@text = 'OK']",
+    EXISTING_LIST_TITLE_TPL = "//*[@resource-id ='org.wikipedia:id/item_title'][@text = '{LIST_TITLE}']",
     CLOSE_ARTICLE_BUTTON = "//*[contains(@content-desc,'Navigate up')]";
 
-
+    // template methods
+    private static String getExistingListTitle(String substring) {
+        return EXISTING_LIST_TITLE_TPL.replace("{LIST_TITLE}", substring);
+    }
+    // template methods
 
     public ArticlePageObject(AppiumDriver driver){
         super(driver);
@@ -34,8 +39,7 @@ public class ArticlePageObject extends MainPageObject {
                 "Cannot find footer element on the end of the page", 10);
     }
 
-    public void addArticleToMyList(String name_of_folder){
-
+    public void addArticleToNewList(String name_of_folder){
         //кликаю на кнопку Save на нижней панели
         this.waitForElementAndClick(By.xpath(SAVE_TO_MY_LIST_BUTTON),
                 "'Save' bookmark button not found on navigation panel",
@@ -47,7 +51,7 @@ public class ArticlePageObject extends MainPageObject {
                 5);
 
         //в окне создания нового списка сохраненного пишу название списка
-        this.waitForElementAndSendKeys(By.xpath(MY_LIST_NAME_INPUT),
+        this.waitForElementAndSendKeys(By.xpath(NEW_LIST_NAME_INPUT),
                 name_of_folder,
                 "'Name of the list' input not found",
                 5);
@@ -58,10 +62,32 @@ public class ArticlePageObject extends MainPageObject {
                 5);
     }
 
+    public void addArticleToExistingList(String folder_name){
+        //кликаю на кнопку Save на нижней панели
+        this.waitForElementAndClick(By.xpath(SAVE_TO_MY_LIST_BUTTON),
+                "'Save' bookmark button not found on navigation panel",
+                5);
+        //во всплывающем окне кликаю ADD TO LIST
+        this.waitForElementAndClick(By.xpath(OPTIONS_ADD_TO_MY_LIST_BUTTON),
+                "'ADD TO LIST' button not found",
+                5);
+        String existing_folder_xpath = getExistingListTitle(folder_name);
+        //на экране со списками кликаю на созданный список
+        this.waitForElementAndClick(By.xpath(existing_folder_xpath),
+                "'" + folder_name + "' not found on the saved lists screen",
+                5);
+    }
+
     public void closeArticle(){
         //возвращаюсь со страницы статьи на страницу результатов поиска
         this.waitForElementAndClick(By.xpath(CLOSE_ARTICLE_BUTTON),
                 "'Navigate up' from article to search results page not found on toolbar",
                 5);
+    }
+
+    public void assertArticleHasTitle(){
+        this.assertElementPresent(
+                By.id(TITLE),
+                "Tile defined by id '" + TITLE + "' was not found on article page");
     }
 }

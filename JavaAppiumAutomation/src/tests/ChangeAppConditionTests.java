@@ -13,7 +13,7 @@ public class ChangeAppConditionTests extends CoreTestCase {
         SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        SearchPageObject.clickByArticleWithDescription("Object-oriented programming language");
 
         ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
@@ -37,8 +37,8 @@ public class ChangeAppConditionTests extends CoreTestCase {
         SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
+        SearchPageObject.waitForSearchResultByDescription("Object-oriented programming language");
         this.backgroundApp(2);
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
+        SearchPageObject.waitForSearchResultByDescription("Object-oriented programming language");
     }
 }

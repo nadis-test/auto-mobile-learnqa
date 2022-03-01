@@ -12,7 +12,7 @@ public class MyListsPageObject extends MainPageObject {
     public MyListsPageObject(AppiumDriver driver){
         super(driver);
     }
-
+// template methods
     private static String getFolderXPathByName(String folder_name){
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", folder_name);
     }
@@ -20,11 +20,12 @@ public class MyListsPageObject extends MainPageObject {
     private static String getArticleTitleXPath(String article_title){
         return ARTICLE_BY_TITLE_TPL.replace("{ARTICLE_TITLE}", article_title);
     }
+    // template methods
 
     public void openFolderByName(String folder_name){
         String folder_name_xpath = getFolderXPathByName(folder_name);
         this.waitForElementAndClick(By.xpath(folder_name_xpath),
-                "'" + folder_name + "' item  not found in Save screen",
+                "'" + folder_name + "' item  not found in Saved screen",
                 5);
     }
 
