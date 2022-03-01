@@ -110,4 +110,23 @@ public class SearchTests extends CoreTestCase {
             }
         }
     }
+
+    @Test
+    public void testCheckSearchResultByTitleAndDescription(){
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        String search_query = "meme";
+        SearchPageObject.typeSearchLine(search_query);
+        String title_1 = "Meme";
+        String description_1 = "Thought or idea that can be shared, in analogy to a gene";
+        SearchPageObject.waitForElementByTitleAndDescription(title_1, description_1);
+        String title_2 = "Memento (film)";
+        String description_2 = "2000 American film by Christopher Nolan";
+        SearchPageObject.waitForElementByTitleAndDescription(title_2, description_2);
+        String title_3 = "Memento mori";
+        String description_3 = "Artistic or symbolic reminder of the inevitability of death";
+        SearchPageObject.waitForElementByTitleAndDescription(title_3, description_3);
+    }
 }
