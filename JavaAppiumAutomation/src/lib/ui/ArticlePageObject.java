@@ -1,19 +1,20 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
-    private static final String
-    TITLE = "id:pcs-edit-section-title-description",
-    FOOTER_ELEMENT = "xpath://*[@text='View article in browser']",
-    SAVE_TO_MY_LIST_BUTTON = "xpath://*[@resource-id='org.wikipedia:id/article_menu_bookmark']",
-    OPTIONS_ADD_TO_MY_LIST_BUTTON = "xpath://*[contains(@text,'ADD TO LIST')]",
-    NEW_LIST_NAME_INPUT = "xpath://*[@resource-id='org.wikipedia:id/text_input']",
-    MY_LIST_OK_BUTTON = "xpath://*[@resource-id='android:id/button1'][@text = 'OK']",
-    EXISTING_LIST_TITLE_TPL = "xpath://*[@resource-id ='org.wikipedia:id/item_title'][@text = '{LIST_TITLE}']",
-    CLOSE_ARTICLE_BUTTON = "xpath://*[contains(@content-desc,'Navigate up')]";
+abstract public class ArticlePageObject extends MainPageObject {
+    protected static String
+        TITLE,
+        FOOTER_ELEMENT,
+        SAVE_TO_MY_LIST_BUTTON,
+        OPTIONS_ADD_TO_MY_LIST_BUTTON,
+        NEW_LIST_NAME_INPUT,
+        MY_LIST_OK_BUTTON,
+        EXISTING_LIST_TITLE_TPL,
+        CLOSE_ARTICLE_BUTTON;
 
     // template methods
     private static String getExistingListTitle(String substring) {
@@ -26,17 +27,22 @@ public class ArticlePageObject extends MainPageObject {
     }
 
     public WebElement waitForTitleElement(){
-        return this.waitForElementPresent(TITLE, "Cannod find title element on page", 5);
+        return this.waitForElementPresent(TITLE, "Cannot find title element on page", 5);
     }
 
     public String getArticleTitle(){
         WebElement title_element = waitForTitleElement();
-        return title_element.getAttribute("text");
+        if (Platform.getInstance().isAndroid()) {
+            return title_element.getAttribute("text");
+        } else { return title_element.getAttribute("label"); }
     }
 
     public void swipeToFooter(){
+        System.out.println("swipeToFooter()");
+        if (Platform.getInstance().isAndroid()){
         this.swipeUpToFindElement(FOOTER_ELEMENT,
-                "Cannot find footer element on the end of the page", 10);
+                "Cannot find footer element on the end of the page", 40);
+        } else this.swipeUpTillElementAppears(FOOTER_ELEMENT, "Cannot find footer element on the end of the page",40);
     }
 
     public void addArticleToNewList(String name_of_folder){
@@ -89,5 +95,9 @@ public class ArticlePageObject extends MainPageObject {
         this.assertElementPresent(
                 TITLE,
                 "Tile defined by id '" + TITLE + "' was not found on article page");
+    }
+
+    public void addArticlesToMySaved(){
+        this.waitForElementAndClick(SAVE_TO_MY_LIST_BUTTON, "Save button not found", 5);
     }
 }

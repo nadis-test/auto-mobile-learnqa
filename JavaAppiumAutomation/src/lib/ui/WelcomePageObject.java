@@ -7,12 +7,13 @@ import org.openqa.selenium.By;
 public class WelcomePageObject extends MainPageObject{
 
     private static final String
-        STEP_LEARN_MORE_LINK = "-ios class chain:**/XCUIElementTypeStaticText[`label == \"Learn more about Wikipedia\"`]",
-        STEP_NEW_WAYS_TO_EXPLORE = "-ios class chain:**/XCUIElementTypeStaticText[`label == \"New ways to explore\"`]",
-        STEP_ADD_AND_EDIT_PREF_LANG = "-ios class chain:**/XCUIElementTypeStaticText[`label == \"Add or edit preferred languages\"`]",
-        STEP_LEARN_MORE_ABOUT_DATA_COLLECTED = "-ios class chain:**/XCUIElementTypeStaticText[`label == \"Learn more about data collected\"`]",
-        NEXT_BUTTON = "-ios class chain:**/XCUIElementTypeStaticText[`label == \"Next\"`]",
-        GET_STARTED_BUTTON = "-ios class chain:**/XCUIElementTypeStaticText[`label == \"Get started\"`]";
+        STEP_LEARN_MORE_LINK = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Learn more about Wikipedia'`]",
+        STEP_NEW_WAYS_TO_EXPLORE = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'New ways to explore'`]",
+        STEP_ADD_AND_EDIT_PREF_LANG = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Add or edit preferred languages'`]",
+        STEP_LEARN_MORE_ABOUT_DATA_COLLECTED = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Learn more about data collected'`]",
+        NEXT_BUTTON = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Next'`]",
+        GET_STARTED_BUTTON = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Get started'`]",
+        SKIP_BUTTON = "-ios class chain:**/XCUIElementTypeButton[`label == \"Skip\"`]";
 
 
     public WelcomePageObject(AppiumDriver driver){
@@ -41,5 +42,9 @@ public class WelcomePageObject extends MainPageObject{
 
     public void clickGetStartedButton(){
         this.waitForElementAndClick(GET_STARTED_BUTTON, "'Get started' button not found", 5);
+    }
+
+    public void clickSkip(){
+        this.waitForElementAndClick(SKIP_BUTTON, "Skip button not found", 5);
     }
 }

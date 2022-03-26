@@ -3,20 +3,22 @@ package tests;
 import lib.CoreTestCase;
 import lib.ui.ArticlePageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 public class ArticleTests extends CoreTestCase {
     @Test
     public void testCompareArticleTitle() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
-        SearchPageObject.skipOnboarding();
+        //SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithDescription("Object-oriented programming language");
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         String article_title = ArticlePageObject.getArticleTitle();
         assertEquals(
                 "Unexpected title on the article page",
@@ -27,22 +29,22 @@ public class ArticleTests extends CoreTestCase {
 
     @Test
     public void testSwipeArticle(){
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
-        SearchPageObject.skipOnboarding();
+       // SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Appium");
-        SearchPageObject.clickByArticleWithDescription("Automation for Apps");
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithDescription("Object-oriented programming language");
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-        ArticlePageObject.waitForTitleElement();
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
+        //ArticlePageObject.waitForTitleElement();
         ArticlePageObject.getArticleTitle();
         ArticlePageObject.swipeToFooter();
     }
 
     @Test
     public void testArticleHasTitleElement() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_query = "meme";
@@ -50,7 +52,7 @@ public class ArticleTests extends CoreTestCase {
         String article_title = "Memento (film)";
         SearchPageObject.clickByArticleWithTitle(article_title);
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
         ArticlePageObject.assertArticleHasTitle();
     }
 }

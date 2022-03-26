@@ -5,6 +5,7 @@ import io.appium.java_client.MobileBy;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -33,7 +34,6 @@ public class MainPageObject {
             String default_message = "Element '" + by.toString() +"' supposed to be present;";
             throw new AssertionError(default_message + " " + error_message);
         }
-
     }
 
     public WebElement waitForElementPresent(String locator, String error_message, long timeoutInSeconds){
@@ -139,13 +139,34 @@ public class MainPageObject {
 
         TouchAction action = new TouchAction(driver);
 
-        action.
-                press(PointOption.point(right_x, middle_y)).
-                waitAction(WaitOptions.waitOptions(Duration.ofMillis(300))).
-                moveTo(PointOption.point(left_x, middle_y)).
-                release().
-                perform();
+        action.press(PointOption.point(right_x, middle_y));
+        action.waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)));
+        if (Platform.getInstance().isAndroid()) {
+            action.moveTo(PointOption.point(left_x, middle_y));
+        } else {
+            int offset_x = (-1*element.getSize().getWidth()); //самая левая точка элемента
+            action.moveTo(PointOption.point(offset_x, 0 ));
+        }
+        action.release();
+        action.perform();
+    }
 
+
+    public boolean isElementLocatedOnTheScreen(String locator){
+        int element_location_by_y = this.waitForElementPresent(locator, "Cannot find element by locator", 10).getLocation().getY();
+        int screen_size_by_window = driver.manage().window().getSize().getHeight();
+        return element_location_by_y < screen_size_by_window;
+    }
+
+    public void swipeUpTillElementAppears(String locator, String error_message, int max_swipes){
+        int already_swiped = 0;
+        while (!this.isElementLocatedOnTheScreen(locator)){
+            if (already_swiped > max_swipes) {
+                Assert.assertTrue(error_message, this.isElementLocatedOnTheScreen(locator));
+            }
+            swipeUpQuick();
+            ++already_swiped;
+        }
     }
 
     public int getAmountOfElements(String locator){

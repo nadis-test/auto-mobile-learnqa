@@ -1,43 +1,54 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class MyListsTests extends CoreTestCase {
+    private static final String FOLDER_NAME = "my list";
+
     @Test
     public void testSaveFirstArticleToMyList(){
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
-        SearchPageObject.skipOnboarding();
+        //SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithDescription("Object-oriented programming language");
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
         String article_title = ArticlePageObject.getArticleTitle();
-
-        String folder_name = "my list";
-        ArticlePageObject.addArticleToNewList(folder_name);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToNewList(FOLDER_NAME);
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+        }
 
         ArticlePageObject.closeArticle();
 
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.returnFromSearchResultsToMainPage();
         NavigationUI.clickSavedLists();
 
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-        MyListsPageObject.openFolderByName(folder_name);
+        MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
+        if (Platform.getInstance().isAndroid()) {
+            MyListsPageObject.openFolderByName(FOLDER_NAME);
+        } else {MyListsPageObject.closeSyncOverlay();}
         MyListsPageObject.swipeArticleToDelete(article_title);
     }
 
     @Test
     public void testSaveTwoArticlesDeleteOneArticle(){
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_query = "meme";
@@ -45,7 +56,7 @@ public class MyListsTests extends CoreTestCase {
         String article_title_1 = "Memento (film)";
         SearchPageObject.clickByArticleWithTitle(article_title_1);
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
         String folder_name = "Mementos list";
         ArticlePageObject.addArticleToNewList(folder_name);
         ArticlePageObject.closeArticle();
@@ -55,11 +66,11 @@ public class MyListsTests extends CoreTestCase {
         ArticlePageObject.addArticleToExistingList(folder_name);
         ArticlePageObject.closeArticle();
 
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.returnFromSearchResultsToMainPage();
         NavigationUI.clickSavedLists();
 
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
+        MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
         MyListsPageObject.openFolderByName(folder_name);
         MyListsPageObject.waitForArticleToAppearByTitle(article_title_1);
         MyListsPageObject.waitForArticleToAppearByTitle(article_title_2);
