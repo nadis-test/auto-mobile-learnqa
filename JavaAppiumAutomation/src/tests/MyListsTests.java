@@ -2,14 +2,8 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.Platform;
-import lib.ui.ArticlePageObject;
-import lib.ui.MyListsPageObject;
-import lib.ui.NavigationUI;
-import lib.ui.SearchPageObject;
-import lib.ui.factories.ArticlePageObjectFactory;
-import lib.ui.factories.MyListPageObjectFactory;
-import lib.ui.factories.NavigationUIFactory;
-import lib.ui.factories.SearchPageObjectFactory;
+import lib.ui.*;
+import lib.ui.factories.*;
 import org.junit.Test;
 
 public class MyListsTests extends CoreTestCase {
@@ -19,13 +13,11 @@ public class MyListsTests extends CoreTestCase {
     public void testSaveFirstArticleToMyList(){
 
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        //SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithDescription("Object-oriented programming language");
 
-        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         String article_title = ArticlePageObject.getArticleTitle();
         if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addArticleToNewList(FOLDER_NAME);
@@ -49,7 +41,6 @@ public class MyListsTests extends CoreTestCase {
     @Test
     public void testSaveTwoArticlesDeleteOneArticle(){
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_query = "meme";
         SearchPageObject.typeSearchLine(search_query);

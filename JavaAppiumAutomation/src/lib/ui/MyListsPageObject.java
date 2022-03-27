@@ -2,7 +2,6 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import lib.Platform;
-import org.openqa.selenium.By;
 
 abstract public class MyListsPageObject extends MainPageObject {
 

@@ -1,19 +1,17 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileBy;
-import org.openqa.selenium.By;
 
 public class WelcomePageObject extends MainPageObject{
 
-    private static final String
-        STEP_LEARN_MORE_LINK = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Learn more about Wikipedia'`]",
-        STEP_NEW_WAYS_TO_EXPLORE = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'New ways to explore'`]",
-        STEP_ADD_AND_EDIT_PREF_LANG = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Add or edit preferred languages'`]",
-        STEP_LEARN_MORE_ABOUT_DATA_COLLECTED = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Learn more about data collected'`]",
-        NEXT_BUTTON = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Next'`]",
-        GET_STARTED_BUTTON = "-ios class chain:**/XCUIElementTypeStaticText[`label == 'Get started'`]",
-        SKIP_BUTTON = "-ios class chain:**/XCUIElementTypeButton[`label == \"Skip\"`]";
+    protected static String
+        STEP_LEARN_MORE_LINK,
+        STEP_NEW_WAYS_TO_EXPLORE,
+        STEP_ADD_AND_EDIT_PREF_LANG,
+        STEP_LEARN_MORE_ABOUT_DATA_COLLECTED,
+        NEXT_BUTTON,
+        GET_STARTED_BUTTON,
+        SKIP_BUTTON;
 
 
     public WelcomePageObject(AppiumDriver driver){

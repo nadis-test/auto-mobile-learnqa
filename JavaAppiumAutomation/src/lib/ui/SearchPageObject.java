@@ -7,7 +7,6 @@ abstract public class SearchPageObject extends MainPageObject {
     protected static String
             SEARCH_INIT_ELEMENT,
             SEARCH_INPUT,
-            ONBORDING_BUTTON_SKIP,
             SEARCH_RESULT_DESCRIPTION_BY_SUBSTRING_TPL,
             SEARCH_RESULT_TITLE_BY_SUBSTRING_TPL,
             SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION_TPL,
@@ -37,10 +36,6 @@ abstract public class SearchPageObject extends MainPageObject {
         return replace_title_description;
     }
     // TEMPLATE METHODS section
-
-    public void skipOnboarding(){
-        this.waitForElementAndClick(ONBORDING_BUTTON_SKIP, "Cannot find and click search init element", 5);
-    }
 
     public void initSearchInput() {
         this.waitForElementPresent(SEARCH_INIT_ELEMENT, "Cannot find search input before clicking search init element", 5);

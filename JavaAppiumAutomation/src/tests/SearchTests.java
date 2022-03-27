@@ -4,7 +4,6 @@ import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
 import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
@@ -13,16 +12,12 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testCheckSearchFieldCaption() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        SearchPageObject.skipOnboarding();
         SearchPageObject.checkSearchInputCaption("Search Wikipedia");
     }
 
     @Test
     public void testSearch() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForSearchResultByDescription("Object-oriented programming language");
@@ -31,8 +26,6 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testCancelSearch() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Appium");
         SearchPageObject.waitForCancelButtonToAppear();
@@ -43,7 +36,6 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testAmountOfNoEpmtySearch() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_line = "Linkin Park diskography";
         SearchPageObject.typeSearchLine(search_line);
@@ -57,7 +49,6 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testAmountOfEmptySearch() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_line = "hlsdfkg";
         SearchPageObject.typeSearchLine(search_line);
@@ -68,8 +59,6 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testCheckSearchResultsAndCancelSearch() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_query = "meme";
         SearchPageObject.typeSearchLine(search_query);
@@ -86,8 +75,6 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testCheckSearchResultsForQuery() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_query = "Java";
         SearchPageObject.typeSearchLine(search_query);
@@ -115,8 +102,6 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testCheckSearchResultByTitleAndDescription(){
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         String search_query = "meme";
         SearchPageObject.typeSearchLine(search_query);

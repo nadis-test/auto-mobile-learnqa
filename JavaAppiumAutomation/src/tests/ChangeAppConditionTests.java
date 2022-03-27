@@ -12,7 +12,6 @@ public class ChangeAppConditionTests extends CoreTestCase {
     public void testSearchScreenChangeOrientation(){
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithDescription("Object-oriented programming language");
@@ -36,7 +35,6 @@ public class ChangeAppConditionTests extends CoreTestCase {
     @Test
     public void testArticleTitleAfterBackground(){
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
-        SearchPageObject.skipOnboarding();
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForSearchResultByDescription("Object-oriented programming language");
