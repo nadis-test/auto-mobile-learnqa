@@ -46,7 +46,7 @@ public class MyListsTests extends CoreTestCase {
         SearchPageObject.typeSearchLine(search_query);
         String article_title_1 = "Memento (film)";
         SearchPageObject.clickByArticleWithTitle(article_title_1);
-        
+
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
         if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addArticleToNewList(FOLDER_NAME);

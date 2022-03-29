@@ -131,5 +131,13 @@ abstract public class SearchPageObject extends MainPageObject {
                 "Cannot find search result with title + '" + title + "' and description '" + description +"'",
                 5);
     }
+
+    public void waitForElementByTitle(String title){
+        String search_result_xpath = getResultSearchElementByTitle(title);
+        this.waitForElementPresent(
+                search_result_xpath,
+                "Cannot find search result with title + '" + title,
+                5);
+    }
 }
 
