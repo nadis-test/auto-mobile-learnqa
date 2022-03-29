@@ -46,15 +46,22 @@ public class MyListsTests extends CoreTestCase {
         SearchPageObject.typeSearchLine(search_query);
         String article_title_1 = "Memento (film)";
         SearchPageObject.clickByArticleWithTitle(article_title_1);
-
+        
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
-        String folder_name = "Mementos list";
-        ArticlePageObject.addArticleToNewList(folder_name);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToNewList(FOLDER_NAME);
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
         String article_title_2 = "Memento mori";
         SearchPageObject.clickByArticleWithTitle(article_title_2);
-        ArticlePageObject.addArticleToExistingList(folder_name);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToNewList(FOLDER_NAME);
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
@@ -62,7 +69,9 @@ public class MyListsTests extends CoreTestCase {
         NavigationUI.clickSavedLists();
 
         MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
-        MyListsPageObject.openFolderByName(folder_name);
+        if (Platform.getInstance().isAndroid()) {
+            MyListsPageObject.openFolderByName(FOLDER_NAME);
+        } else {MyListsPageObject.closeSyncOverlay();}
         MyListsPageObject.waitForArticleToAppearByTitle(article_title_1);
         MyListsPageObject.waitForArticleToAppearByTitle(article_title_2);
         MyListsPageObject.swipeArticleToDelete(article_title_1);
